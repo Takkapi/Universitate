@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+const int k = 69;
+
 /// Laboratorul nr. 1 la Structuri de Date si Algoritm
 /// Realizat de Smolenschi Petru, TI-252FR
 
@@ -310,9 +312,28 @@ int selection_sort(int *arr, int size) {
             if(*(arr + j) < *(arr + min)) min = j;
         }
 
-        if(min != i) 
+        if(min != i)
             swap(arr + i, arr + min);
     }
+
+    print_arr(arr, size);
+}
+
+// INSERTION SORT -> Descrescator
+void insertion_sort(int arr[], int size) {
+    int i, key, j;
+    for(i = 1; i < size; i++) {
+        key = arr[i];
+        j = i - 1;
+
+        while(j >= 0 && arr[j] < key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+
+    print_arr(arr, size);
 }
 
 #pragma endregion
@@ -377,35 +398,83 @@ void v8_1C(int *arr, int size) {
 }
 
 void v8_2A(int *mat, int size, int *arr) {
-    // TODO: Check the conditions
-
-    // Diagonala principala
-    // for(int i = 0; i < size; i++)
-    //     arr[i] = mat[i * size + i];
-    
-    // print_arr(arr, size);
-
-    // quicksort(arr, size);
-
-    // for(int i = 0; i < size; i++)
-    //     mat[i * size + i] = arr[i];
-    
-    // print_mat(mat, size);
-
-    // Diagonala secundara
-    for(int i = 0; i < size; i++) 
-        arr[i] = mat[i * size + (size - 1 - i)];
-
-    print_arr(arr, size);
-    
-    shell(arr, size);
+    int prod = 1;
 
     for(int i = 0; i < size; i++) 
+        prod *= mat[i * size];
+
+    if(prod >= k) {
+        // Diagonala principala
+        for(int i = 0; i < size; i++)
+            arr[i] = mat[i * size + i];
+        
+        print_arr(arr, size);
+        
+        quicksort(arr, size);
+        
+        for(int i = 0; i < size; i++)
+            mat[i * size + i] = arr[i];
+        
+        print_mat(mat, size);
+    } else {
+        // Diagonala secundara
+        for(int i = 0; i < size; i++) 
+            arr[i] = mat[i * size + (size - 1 - i)];
+        
+        print_arr(arr, size);
+        
+        shell(arr, size);
+        
+        for(int i = 0; i < size; i++) 
         mat[i * size + (size - 1 - i)] = arr[i];
+        
+        print_mat(mat, size);
+    }
+}
 
+void v8_2B(int *mat, int size, int *arr) {
+    int isNegOnOdd = 0, isLowest = 0, line, lowestLine, min = 999;
+
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            if(mat[i * size + j] < 0 && i % 2 == 1) {
+                isNegOnOdd = 1;
+                line = i;
+                printf("%d on %d\n", mat[i * size + j], i);
+            }
+            if(mat[i * size + j] <= min) {
+                min = mat[i * size + j];
+                isLowest = 1;
+                lowestLine = i;
+            }
+        }
+    }
+
+    
+    if(isNegOnOdd) {
+        for(int j = 0; j < size; j++) 
+            arr[j] = mat[line * size + j];
+        
+        print_arr(arr, size);
+        
+        selection_sort(arr, size);
+
+        for(int j = 0; j < size; j++) 
+            mat[line * size + j] = arr[j];
+    } else {
+        if(isLowest)
+            for(int j = 0; j < size; j++) 
+                arr[j] = mat[lowestLine * size + j];
+        
+        print_arr(arr, size);
+
+        insertion_sort(arr, size);
+
+        for(int j = 0; j < size; j++) 
+            mat[lowestLine * size + j] = arr[j];
+    }
+    
     print_mat(mat, size);
-
-    // free(arr);
 }
 
 // Alocarea memoriei pentru array
@@ -496,6 +565,7 @@ void menu(int *arr, int *mat, int size) {
     printf("8) V8.2 - Introducerea valorilor de la tastatura\n");
     printf("9) V8.2 - Completarea array-ului cu valori random\n");
     printf("10) V8.2 - Subprogramul A\n");
+    printf("11) V8.2 - Subprogramul B\n");
 
     printf("\n99) Eliberarea memoriei\n");
     printf("\n0) Finisarea programului\n");
@@ -576,6 +646,13 @@ void menu(int *arr, int *mat, int size) {
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
                 v8_2A(mat, size, arr);
+            break;
+
+        case 11:
+            if(mat == NULL || arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                v8_2B(mat, size, arr);
             break;
 
         case 99:
