@@ -86,6 +86,12 @@ void print_mat(int *mat, int size) {
     printf("\n\n");
 }
 
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
 #pragma region Sortari
 // HEAPSORT -> Crescator
 void heapify(int *arr, int size, int i) {
@@ -97,10 +103,7 @@ void heapify(int *arr, int size, int i) {
     if(right < size && *(arr + right) > *(arr + largest)) largest = right;
 
     if(largest != i) {
-        int temp = *(arr + i);
-
-        *(arr + i) = *(arr + largest);
-        *(arr + largest) = temp;
+        swap(arr + i, arr + largest);
 
         heapify(arr, size, largest);
     }
@@ -110,9 +113,7 @@ void heap_sort(int *arr, int size) {
     for(int i = size / 2 - 1; i >= 0; i--) heapify(arr, size, i);
 
     for(int i = size - 1; i >= 0; i--) {
-        int temp = *(arr);
-        *(arr) = *(arr + i);
-        *(arr + i) = temp;
+        swap(arr, arr + i);
         heapify(arr, i, 0);
     }
 
@@ -179,9 +180,7 @@ void comb_sort(int *arr, int size) {
         swapped = 0;
         for(i = 0, j = gap; j < size; i++, j++) {
             if(*(arr + i) > *(arr + j)) {
-                temp = *(arr  + i);
-                *(arr + i) = *(arr + j);
-                *(arr + j) = temp;
+                swap(arr + i, arr + j);
                 swapped = 1;
             }
         }
@@ -243,15 +242,77 @@ void bubble_sort(int *arr, int size) {
 
     for(i = 0; i < size - 1; i++) {
         for(j = 0; j < size - i - 1; j++) {
-            if(*(arr + j) < *(arr + j + 1)) {
-                temp = *(arr + j);
-                *(arr + j) = *(arr + j + 1);
-                *(arr + j + 1) = temp;
-            }
+            if(*(arr + j) < *(arr + j + 1))
+                swap(arr + j, arr + j + 1);
         }
     }
 
     print_arr(arr, size);
+}
+
+// QUICK SORT -> Crescator
+int partition(int arr[], int low, int high) {
+    int pivot_index = low + (rand() % (high - low));
+    if(pivot_index != high) swap(&arr[pivot_index], &arr[high]);
+
+    int pivot_value = arr[high];
+    int i = low;
+
+    for(int j = low; j < high; j++) {
+        if(arr[j] <= pivot_value) {
+            swap(&arr[i], &arr[j]);
+            i++;
+        }
+    }
+
+    swap(&arr[i], &arr[high]);
+    return i;
+}
+
+void quicksort_recursion(int arr[], int low, int high) {
+    if(low < high) {
+        int pivot_index = partition(arr, low, high);
+        quicksort_recursion(arr, low, pivot_index - 1);
+        quicksort_recursion(arr, pivot_index + 1, high);
+    }
+}
+
+void quicksort(int arr[], int size) {
+    srand(time(NULL));
+    quicksort_recursion(arr, 0, size - 1);
+
+    print_arr(arr, size);
+}
+
+// SHELL SORT -> Descrescator
+int shell(int arr[], int size) {
+    for(int i = size / 2; i > 0; i /= 2) {
+        for(int j = i; j < size; j += 1) {
+            int temp = arr[j];
+            int k;
+            for(k = j; k >= i && arr[k - i] < temp; k -= i) 
+                arr[k] = arr[k - i];
+            
+            arr[k] = temp;
+        }
+    }
+
+    print_arr(arr, size);
+
+    return 0;
+}
+
+// SELECTION SORT -> Crescator
+int selection_sort(int *arr, int size) {
+    for(int i = 0; i < size - 1; i++) {
+        int min = i;
+        for(int j = i + 1; j < size; j++) {
+            if(*(arr + j) < *(arr + min)) min = j;
+        }
+
+        if(min != i) 
+            swap(arr + i, arr + min);
+    }
 }
 
 #pragma endregion
@@ -313,6 +374,38 @@ void v8_1C(int *arr, int size) {
         printf("%d prime numbers -> BubbleSort\n", primes);
         bubble_sort(arr, size);
     }
+}
+
+void v8_2A(int *mat, int size, int *arr) {
+    // TODO: Check the conditions
+
+    // Diagonala principala
+    // for(int i = 0; i < size; i++)
+    //     arr[i] = mat[i * size + i];
+    
+    // print_arr(arr, size);
+
+    // quicksort(arr, size);
+
+    // for(int i = 0; i < size; i++)
+    //     mat[i * size + i] = arr[i];
+    
+    // print_mat(mat, size);
+
+    // Diagonala secundara
+    for(int i = 0; i < size; i++) 
+        arr[i] = mat[i * size + (size - 1 - i)];
+
+    print_arr(arr, size);
+    
+    shell(arr, size);
+
+    for(int i = 0; i < size; i++) 
+        mat[i * size + (size - 1 - i)] = arr[i];
+
+    print_mat(mat, size);
+
+    // free(arr);
 }
 
 // Alocarea memoriei pentru array
@@ -390,7 +483,7 @@ void menu(int *arr, int *mat, int size) {
     int option;
 
     // Printarea variantelor de problema
-    printf("MENIU\n");
+    printf("\nMENIU\n");
     
     printf("\n1) V8.1 - Alocarea memoriei\n");
     printf("2) V8.1 - Introducerea valorilor de la tastatura\n");
@@ -402,8 +495,9 @@ void menu(int *arr, int *mat, int size) {
     printf("\n7) V8.2 - Alocarea memoriei\n");
     printf("8) V8.2 - Introducerea valorilor de la tastatura\n");
     printf("9) V8.2 - Completarea array-ului cu valori random\n");
+    printf("10) V8.2 - Subprogramul A\n");
 
-    printf("\n10) Eliberarea memoriei\n");
+    printf("\n99) Eliberarea memoriei\n");
     printf("\n0) Finisarea programului\n");
     printf("\nAlegeti programul: ");
     scanf("%d", &option);
@@ -460,6 +554,7 @@ void menu(int *arr, int *mat, int size) {
             }
 
             mat = mem_alloc_mat(size);
+            arr = mem_alloc(size);
             break;
 
         case 8:
@@ -477,6 +572,13 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 10:
+            if(mat == NULL || arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                v8_2A(mat, size, arr);
+            break;
+
+        case 99:
             if(arr == NULL && mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else free_mem(arr, mat);
