@@ -51,7 +51,7 @@ Algoritmul functiilor va fi programat, reiesind din continutul problemei in doua
 
 2. Se da un array bidimensional cu elemente de tip integer si un numar natural n(n >= 0), valoarea caruia
     este citita de la tastatura. Sa se afiseze array-ul original si array-ul modificat dupa fiecare manipulare
-    a datelokr din array, afisarea rezultatelor ca si in concluzie (De ex.L Nu exista numere prime; Nu exista
+    a datelor din array, afisarea rezultatelor ca si in concluzie (De ex.: Nu exista numere prime; Nu exista
     elemente cu indexul dat si alte date stipulate in conditia problemei) etc.
 
         A. Daca produsul elementelor de pe prima coloana este mai mare decat valoarea lui k, declarata ca o
@@ -69,6 +69,18 @@ void print_arr(int *arr, int size) {
     printf("\nElementele array-ului: ");
     for(int i = 0; i < size; i++) {
         printf("%d ", arr[i]);
+    }
+
+    printf("\n\n");
+}
+
+void print_mat(int *mat, int size) {
+    printf("\nElementele matricei:\n");
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            printf("%d\t", mat[i * size + j]);
+        }
+        printf("\n");
     }
 
     printf("\n\n");
@@ -314,6 +326,17 @@ int *mem_alloc(int size) {
     return arr;
 }
 
+// Alocarea memoriei pentru matrice
+int *mem_alloc_mat(int size) {
+    int *mat = (int*)malloc(size * size * sizeof(int));
+    if(mat == NULL) {
+        printf("Nu s-a putut aloca memorie pentru matrice!.\n EXITING PROGRAM...");
+        exit(-1);
+    }
+
+    return mat;
+}
+
 void input8_1(int *arr, int size) {
     for(int i = 0; i < size; i++) {
         printf("Dati valoare elementului %d: ", i);
@@ -321,6 +344,17 @@ void input8_1(int *arr, int size) {
     }
 
     print_arr(arr, size);
+}
+
+void input8_2(int *mat, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            printf("Dati valoare elementului de pe pozitia [%d, %d]: ", i, j);
+            scanf("%d", &mat[i * size + j]);
+        }
+    }
+
+    print_mat(mat, size);
 }
 
 // Completarea array-ului cu valori random
@@ -333,27 +367,45 @@ void random_fill(int *arr, int size) {
     print_arr(arr, size);
 }
 
+void random_fill_mat(int *mat, int size) {
+    srand(time(NULL));
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            mat[i * size + j] = rand() % 100;
+        }
+    }
+
+    print_mat(mat, size);
+}
+
 // Eliberarea memoriei
-void free_mem(int *arr) {
+void free_mem(int *arr, int *mat) {
     free(arr);
+    free(mat);
     printf("Memoria a fost eliberata cu succes!\n");
 }
 
 // Meniu
-void menu(int *arr, int size) {
+void menu(int *arr, int *mat, int size) {
     int option;
 
     // Printarea variantelor de problema
     printf("MENIU\n");
+    
     printf("\n1) V8.1 - Alocarea memoriei\n");
     printf("2) V8.1 - Introducerea valorilor de la tastatura\n");
     printf("3) V8.1 - Completarea array-ului cu valori random\n");
     printf("4) V8.1 - Subprogramul A\n");
     printf("5) V8.1 - Subprogramul B\n");
     printf("6) V8.1 - Subprogramul C\n");
-    printf("9) Eliberarea memoriei\n");
-    printf("0) Finisarea programului\n");
-    printf("\n Alegeti programul: ");
+
+    printf("\n7) V8.2 - Alocarea memoriei\n");
+    printf("8) V8.2 - Introducerea valorilor de la tastatura\n");
+    printf("9) V8.2 - Completarea array-ului cu valori random\n");
+
+    printf("\n10) Eliberarea memoriei\n");
+    printf("\n0) Finisarea programului\n");
+    printf("\nAlegeti programul: ");
     scanf("%d", &option);
 
     switch(option) {
@@ -401,10 +453,33 @@ void menu(int *arr, int size) {
                 v8_1C(arr, size);
             break;
 
-        case 9:
-            if(arr == NULL)
+        case 7:
+            while(size < 0) {
+                printf("Introduceti dimensiunea matricei: ");
+                scanf("%d", &size);
+            }
+
+            mat = mem_alloc_mat(size);
+            break;
+
+        case 8:
+            if(mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
-            else free_mem(arr);
+            else 
+                input8_2(mat, size);
+            break;
+        
+        case 9:
+            if(mat == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                random_fill_mat(mat, size);
+            break;
+
+        case 10:
+            if(arr == NULL && mat == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else free_mem(arr, mat);
             break;
         case 0:
             exit(0);
@@ -413,15 +488,15 @@ void menu(int *arr, int size) {
             break;
     }
 
-    menu(arr, size);
+    menu(arr, mat, size);
 }
 
 int main() {
-    int *arr = NULL;
-    int size = 0;
+    int *arr = NULL, *mat = NULL;
+    int size = -1;
     printf("Laborator 1 - SDA\n");
 
-    menu(arr, size);
+    menu(arr, mat, size);
 
     return 0;
 }
