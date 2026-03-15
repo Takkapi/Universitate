@@ -64,6 +64,88 @@ Algoritmul functiilor va fi programat, reiesind din continutul problemei in doua
             sortare InsertionSort.
 */
 
+// Afisarea array-ului
+void print_arr(int *arr, int size) {
+    printf("\nElementele array-ului: ");
+    for(int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\n\n");
+}
+
+#pragma region Sortari
+// HEAPSORT
+void heapify(int *arr, int size, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if(left < size && *(arr + left) > *(arr + largest)) largest = left;
+    if(right < size && *(arr + right) > *(arr + largest)) largest = right;
+
+    if(largest != i) {
+        int temp = *(arr + i);
+
+        *(arr + i) = *(arr + largest);
+        *(arr + largest) = temp;
+
+        heapify(arr, size, largest);
+    }
+}
+
+void heap_sort(int *arr, int size) {
+    for(int i = size / 2 - 1; i >= 0; i--) heapify(arr, size, i);
+
+    for(int i = size - 1; i >= 0; i--) {
+        int temp = *(arr);
+        *(arr) = *(arr + i);
+        *(arr + i) = temp;
+        heapify(arr, i, 0);
+    }
+
+    print_arr(arr, size);
+}
+
+// COUNTING SORT
+void counting_sort(int arr[], int size) {
+    int i, max = arr[0];
+    
+    for(int i = 1; i < size; i++) {
+        if(arr[i] > max) max = arr[i];
+    }
+
+    int bucket[max + 1];
+    for(i = 0; i <= max; i++) bucket[i] = 0;
+    for(i = 0; i < size; i++) bucket[arr[i]]++;
+
+    int j = 0;
+    for(i = max; i >= 0; i--) {
+        while(bucket[i] > 0) {
+            arr[j++] = i;
+            bucket[i]--;
+        }
+    }
+
+    print_arr(arr, size);
+}
+
+#pragma endregion
+
+void v8_1A(int *arr, int size) {
+    int negPar = 0;
+
+    for(int i = 0; i < size; i++) {
+        if(arr[i] < 0 && i % 2 == 0) {
+            negPar = 1;
+            break;
+        } else negPar = 0;
+    }
+
+    if(negPar) heap_sort(arr, size);
+    else counting_sort(arr, size);
+}
+
 // Alocarea memoriei pentru array
 int *mem_alloc(int size) {
     int *arr = (int*)malloc(size * sizeof(int));
@@ -73,16 +155,6 @@ int *mem_alloc(int size) {
     }
 
     return arr;
-}
-
-// Afisarea array-ului
-void print_arr(int *arr, int size) {
-    printf("\nElementele array-ului: ");
-    for(int i = 0; i < size; i++) {
-        printf("%d ", arr[i]);
-    }
-
-    print("\n\n");
 }
 
 void input8_1(int *arr, int size) {
@@ -108,7 +180,6 @@ void random_fill(int *arr, int size) {
 void free_mem(int *arr) {
     free(arr);
     printf("Memoria a fost eliberata cu succes!\n");
-    exit(0);
 }
 
 // Meniu
@@ -120,6 +191,9 @@ void menu(int *arr, int size) {
     printf("\n1) V8.1 - Alocarea memoriei\n");
     printf("2) V8.1 - Introducerea valorilor de la tastatura\n");
     printf("3) V8.1 - Completarea array-ului cu valori random\n");
+    printf("4) V8.1 - Subprogramul A\n");
+    printf("9) Eliberarea memoriei\n");
+    printf("0) Finisarea programului\n");
     printf("\n Alegeti programul: ");
     scanf("%d", &option);
 
@@ -136,19 +210,31 @@ void menu(int *arr, int size) {
         case 2:
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
-            else {
+            else 
                 input8_1(arr, size);
-                printf("Valorile au fost introduse!\n");
-            }
             break;
         
         case 3:
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
-            else {
+            else 
                 random_fill(arr, size);
-                printf("Valorile au fost introduse!\n");
-            }
+            break;
+        
+        case 4:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                v8_1A(arr, size);
+            break;
+
+        case 9:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else free_mem(arr);
+            break;
+        case 0:
+            exit(0);
         default:
             printf("Invalid subprogram!\n");
             break;
