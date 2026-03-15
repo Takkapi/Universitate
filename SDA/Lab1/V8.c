@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 /// Laboratorul nr. 1 la Structuri de Date si Algoritm
 /// Realizat de Smolenschi Petru, TI-252FR
@@ -62,8 +64,105 @@ Algoritmul functiilor va fi programat, reiesind din continutul problemei in doua
             sortare InsertionSort.
 */
 
+// Alocarea memoriei pentru array
+int *mem_alloc(int size) {
+    int *arr = (int*)malloc(size * sizeof(int));
+    if(arr == NULL) {
+        printf("Nu s-a putut aloca memorie pentru array!.\n EXITING PROGRAM...");
+        exit(-1);
+    }
+
+    return arr;
+}
+
+// Afisarea array-ului
+void print_arr(int *arr, int size) {
+    printf("\nElementele array-ului: ");
+    for(int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    print("\n\n");
+}
+
+void input8_1(int *arr, int size) {
+    for(int i = 0; i < size; i++) {
+        printf("Dati valoare elementului %d: ", i);
+        scanf("%d", &arr[i]);
+    }
+
+    print_arr(arr, size);
+}
+
+// Completarea array-ului cu valori random
+void random_fill(int *arr, int size) {
+    srand(time(NULL));
+    for(int i = 0; i < size; i ++) {
+        arr[i] = rand() % 100;
+    }
+
+    print_arr(arr, size);
+}
+
+// Eliberarea memoriei
+void free_mem(int *arr) {
+    free(arr);
+    printf("Memoria a fost eliberata cu succes!\n");
+    exit(0);
+}
+
+// Meniu
+void menu(int *arr, int size) {
+    int option;
+
+    // Printarea variantelor de problema
+    printf("MENIU\n");
+    printf("\n1) V8.1 - Alocarea memoriei\n");
+    printf("2) V8.1 - Introducerea valorilor de la tastatura\n");
+    printf("3) V8.1 - Completarea array-ului cu valori random\n");
+    printf("\n Alegeti programul: ");
+    scanf("%d", &option);
+
+    switch(option) {
+        case 1:
+            while(size < 0 || size % 2 != 1) {
+                printf("Introduceti dimensiunea array-ului: ");
+                scanf("%d", &size);
+            }
+
+            arr = mem_alloc(size);
+            break;
+        
+        case 2:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else {
+                input8_1(arr, size);
+                printf("Valorile au fost introduse!\n");
+            }
+            break;
+        
+        case 3:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else {
+                random_fill(arr, size);
+                printf("Valorile au fost introduse!\n");
+            }
+        default:
+            printf("Invalid subprogram!\n");
+            break;
+    }
+
+    menu(arr, size);
+}
+
 int main() {
-    printf("Laborator 1 SDA\nMeniu:\n");
+    int *arr = NULL;
+    int size = 0;
+    printf("Laborator 1 - SDA\n");
+
+    menu(arr, size);
 
     return 0;
 }
