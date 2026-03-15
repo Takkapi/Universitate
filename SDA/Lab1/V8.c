@@ -75,7 +75,7 @@ void print_arr(int *arr, int size) {
 }
 
 #pragma region Sortari
-// HEAPSORT
+// HEAPSORT -> Crescator
 void heapify(int *arr, int size, int i) {
     int largest = i;
     int left = 2 * i + 1;
@@ -107,7 +107,7 @@ void heap_sort(int *arr, int size) {
     print_arr(arr, size);
 }
 
-// COUNTING SORT
+// COUNTING SORT -> Descrescator
 void counting_sort(int arr[], int size) {
     int i, max = arr[0];
     
@@ -130,7 +130,129 @@ void counting_sort(int arr[], int size) {
     print_arr(arr, size);
 }
 
+// RADIX SORT -> Descrescator
+void radix_sort(int arr[], int size) {
+    int i, m = arr[0], exp = 1;
+    int bucket[size], b[size];
+
+    for(i = 0; i < size; i++) {
+        if(arr[i] > m) m = arr[i];
+    }
+
+    while(m / exp > 0) {
+        int bucket_count[10] = {0};
+        for(i = 0; i < size; i++) bucket_count[9 - arr[i] / exp % 10]++;
+        for(i = 1; i < 10; i++) bucket_count[i]  += bucket_count[i - 1];
+        for(i = size - 1; i >= 0; i--) b[--bucket_count[9 - arr[i] / exp % 10]] = arr[i];
+        for(i = 0; i < size; i++) arr[i] = b[i];
+
+        exp *= 10;
+    }
+
+    print_arr(arr, size);
+}
+
+// COMBSORT -> Crescator
+void comb_sort(int *arr, int size) {
+    int gap = size;
+    int i, j, temp;
+    int swapped = 1;
+
+    while(gap > 1 || swapped) {
+        gap = gap * 10 / 13;
+
+        if(gap == 9 || gap == 10) gap = 11;
+        if(gap < 1) gap = 1;
+
+        swapped = 0;
+        for(i = 0, j = gap; j < size; i++, j++) {
+            if(*(arr + i) > *(arr + j)) {
+                temp = *(arr  + i);
+                *(arr + i) = *(arr + j);
+                *(arr + j) = temp;
+                swapped = 1;
+            }
+        }
+    }
+
+    print_arr(arr, size);
+}
+
+// MERGE SORT -> Crescator
+void merge(int arr[], int left, int mid, int right) {
+    int i, j, k;
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    int Left[n1], Right[n2];
+
+    for(i = 0; i < n1; i++) Left[i] = arr[left + i];
+    for(j = 0; j < n2; j++) Right[j] = arr[mid + 1 + j];
+
+    i = 0, j = 0, k = left;
+    while(i < n1 && j < n2) {
+        if(Left[i] <= Right[j]) {
+            arr[k] = Left[i];
+            i++;
+        } else {
+            arr[k] = Right[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i < n1) {
+        arr[k] = Left[i];
+        i++;
+        k++;
+    }
+
+    while(j < n2) {
+        arr[k] = Right[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int arr[], int left, int right) {
+    if(left < right) {
+        int mid = left + (right - left) / 2;
+
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        
+        merge(arr, left, mid, right);
+    }
+}
+
+// BUBBLE SORT -> Descrescator
+void bubble_sort(int *arr, int size) {
+    int i, j, temp;
+
+    for(i = 0; i < size - 1; i++) {
+        for(j = 0; j < size - i - 1; j++) {
+            if(*(arr + j) < *(arr + j + 1)) {
+                temp = *(arr + j);
+                *(arr + j) = *(arr + j + 1);
+                *(arr + j + 1) = temp;
+            }
+        }
+    }
+
+    print_arr(arr, size);
+}
+
 #pragma endregion
+
+int isPrime(int number) {
+    if(number <= 1) return 0;
+
+    for(int i =  2; i * i <= number; i++) {
+        if(number % i == 0) return 0;
+    }
+
+    return 1;
+}
 
 void v8_1A(int *arr, int size) {
     int negPar = 0;
@@ -144,6 +266,41 @@ void v8_1A(int *arr, int size) {
 
     if(negPar) heap_sort(arr, size);
     else counting_sort(arr, size);
+}
+
+void v8_1B(int *arr, int size) {
+    int sumPar = 0, sumImp = 0, impNum = 0, medImp;
+
+    for(int i = 0; i < size; i++) {
+        if(arr[i] % 2 == 0) sumPar += arr[i];
+        else {
+            sumImp += arr[i];
+            impNum++;
+        }
+    }
+
+    medImp = sumImp / impNum;
+
+    if(sumPar < medImp) 
+        radix_sort(arr, size);
+    else
+        comb_sort(arr, size);
+}
+
+void v8_1C(int *arr, int size) {
+    int primes = 0;
+
+    for(int i = 0; i < size; i++)
+        if(isPrime(arr[i])) primes++;
+    
+    if(primes > 1) {
+        printf("%d prime numbers -> MergeSort\n", primes);
+        mergeSort(arr, 0, size - 1);
+        print_arr(arr, size);
+    } else {
+        printf("%d prime numbers -> BubbleSort\n", primes);
+        bubble_sort(arr, size);
+    }
 }
 
 // Alocarea memoriei pentru array
@@ -192,6 +349,8 @@ void menu(int *arr, int size) {
     printf("2) V8.1 - Introducerea valorilor de la tastatura\n");
     printf("3) V8.1 - Completarea array-ului cu valori random\n");
     printf("4) V8.1 - Subprogramul A\n");
+    printf("5) V8.1 - Subprogramul B\n");
+    printf("6) V8.1 - Subprogramul C\n");
     printf("9) Eliberarea memoriei\n");
     printf("0) Finisarea programului\n");
     printf("\n Alegeti programul: ");
@@ -226,6 +385,20 @@ void menu(int *arr, int size) {
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
                 v8_1A(arr, size);
+            break;
+
+        case 5:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                v8_1B(arr, size);
+            break;
+
+        case 6:
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else 
+                v8_1C(arr, size);
             break;
 
         case 9:
