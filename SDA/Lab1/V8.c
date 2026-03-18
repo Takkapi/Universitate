@@ -69,6 +69,15 @@ Algoritmul functiilor va fi programat, reiesind din continutul problemei in doua
 
 #pragma region Utils
 
+void clrscr() {
+    // !!! NOTA !!!
+    // A SE SECHIMBA COMANDA DIN ARGUMENTUL FUNCTIEI 'system();' IN DEPENDENTA DE SISTEMUL DE OPERARE
+    // WINDOWS: 'system("cls");'
+    // UNIX/LINUX/MAC: 'system("clear");'
+    system("clear");
+    //system("cls");
+}
+
 // Afisarea array-ului
 void print_arr(int *arr, int *clone, int size) {
     
@@ -547,7 +556,6 @@ void v8_2B(int *mat, int size, int *arr) {
         }
     }
 
-    
     if(isNegOnOdd) {
         for(int j = 0; j < size; j++) 
             arr[j] = mat[line * size + j];
@@ -600,7 +608,7 @@ void menu(int *arr, int *mat, int size) {
 
     switch(option) {
         case 1:
-            system("clear");
+            clrscr();
             while(size < 0 || size % 2 != 1) {
                 printf("Introduceti dimensiunea array-ului: ");
                 scanf("%d", &size);
@@ -610,7 +618,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 2:
-            system("clear");
+            clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -618,7 +626,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 3:
-            system("clear");
+            clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -626,7 +634,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 4:
-            system("clear");
+            clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -634,7 +642,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 5:
-            system("clear");
+            clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -642,7 +650,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 6:
-            system("clear");
+            clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -650,7 +658,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 7:
-            system("clear");
+            clrscr();
             while(size < 0) {
                 printf("Introduceti dimensiunea matricei: ");
                 scanf("%d", &size);
@@ -661,7 +669,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 8:
-            system("clear");
+            clrscr();
             if(mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -669,7 +677,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 9:
-            system("clear");
+            clrscr();
             if(mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -677,7 +685,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 10:
-            system("clear");
+            clrscr();
             if(mat == NULL || arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -685,7 +693,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 11:
-            system("clear");
+            clrscr();
             if(mat == NULL || arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -693,7 +701,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 99:
-            system("clear");
+            clrscr();
             if(arr == NULL && mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else free_mem(arr, mat);
@@ -701,7 +709,7 @@ void menu(int *arr, int *mat, int size) {
         case 0:
             exit(0);
         default:
-            system("clear");
+            clrscr();
             printf("Invalid subprogram!\n");
             break;
     }

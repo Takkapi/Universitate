@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 /// Laboratorul nr. 2 la Structuri de Date si Algoritm
@@ -20,6 +21,54 @@ Sa se elaboreze funtiile pentru implementarea optiunilor meniului.
 Structura Tablete cu campurile: tip(tableta, carte electronica, tableta grafica), producator,
 dimensiune ecran, sistem de operare, numar de nuclee, pret.
 */
+
+enum Type {
+    Tableta,
+    CarteElectronica,
+    TabletaGrafica
+};
+
+enum Manufacturers {
+    // Tablete
+    Apple,
+    Lenovo,
+    Huawei,
+    Samsung,
+    Motorola,
+    Realme,
+    
+    // Carti Electronice
+    Amazon,
+    Rakuten,
+    Onyx,
+
+    // Tablete Grafice
+    Wacom,
+    Huion,
+    XP_Pen,
+};
+
+enum OS {
+    // Tablete
+    iPasOS,
+    Android,
+    
+    // Carti Electronice
+    // Android poate fi folosit pentru carti electronice
+    Linux,
+    InkBox,
+    Kindle,
+    Kobo,
+};
+
+typedef struct {
+    enum Type type;
+    enum Manufacturers prod;
+    float displaySize;
+    enum OS os;
+    int cores;
+    int price;
+} Tablete;
 
 int main() {
     printf("We are cooked!...\n");
