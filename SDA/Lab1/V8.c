@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 const int k = 69;
@@ -66,9 +67,17 @@ Algoritmul functiilor va fi programat, reiesind din continutul problemei in doua
             sortare InsertionSort.
 */
 
+#pragma region Utils
+
 // Afisarea array-ului
-void print_arr(int *arr, int size) {
-    printf("\nElementele array-ului: ");
+void print_arr(int *arr, int *clone, int size) {
+    
+    printf("\nArray-ul original: ");
+    for(int i = 0; i < size; i++) {
+        printf("%d ", clone[i]);
+    }
+
+    printf("\nElementele array-ului dupa manipulare: ");
     for(int i = 0; i < size; i++) {
         printf("%d ", arr[i]);
     }
@@ -76,8 +85,16 @@ void print_arr(int *arr, int size) {
     printf("\n\n");
 }
 
-void print_mat(int *mat, int size) {
-    printf("\nElementele matricei:\n");
+void print_mat(int *mat, int *clone, int size) {
+    printf("\nMatricea originala:\n");
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            printf("%d\t", clone[i * size + j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nElementele matricei dupa manipulare: \n");
     for(int i = 0; i < size; i++) {
         for(int j = 0; j < size; j++) {
             printf("%d\t", mat[i * size + j]);
@@ -85,14 +102,105 @@ void print_mat(int *mat, int size) {
         printf("\n");
     }
 
-    printf("\n\n");
+    printf("\n");
 }
 
+// Swap
 void swap(int *x, int *y) {
     int temp = *x;
     *x = *y;
     *y = temp;
 }
+
+int isPrime(int number) {
+
+    if(number <= 1) return 0;
+
+    for(int i =  2; i * i <= number; i++) {
+        if(number % i == 0) return 0;
+    }
+
+    return 1;
+}
+
+void *clone_arr(int *arr, int *clone, int size) {
+    for(int i = 0; i < size; i++) 
+        clone[i] = arr[i];
+}
+
+void *clone_mat(int *mat, int *clone, int size) {
+    for(int i = 0; i < size; i++) 
+        for(int j = 0; j < size; j++) 
+            clone[i * size + j] = mat[i * size + j];
+}
+
+// Eliberarea memoriei
+void free_mem(int *arr, int *mat) {
+    if(arr != NULL)
+        free(arr);
+    
+    if(mat != NULL)
+        free(mat);
+    
+    printf("Memoria a fost eliberata cu succes!\n");
+}
+
+// Alocarea memoriei pentru array
+int *mem_alloc(int size) {
+    int *arr = (int*)malloc(size * sizeof(int));
+    if(arr == NULL) {
+        printf("Nu s-a putut aloca memorie pentru array!.\n EXITING PROGRAM...");
+        exit(-1);
+    }
+
+    return arr;
+}
+
+// Alocarea memoriei pentru matrice
+int *mem_alloc_mat(int size) {
+    int *mat = (int*)malloc(size * size * sizeof(int));
+    if(mat == NULL) {
+        printf("Nu s-a putut aloca memorie pentru matrice!.\n EXITING PROGRAM...");
+        exit(-1);
+    }
+
+    return mat;
+}
+
+void input8_1(int *arr, int size) {
+    for(int i = 0; i < size; i++) {
+        printf("Dati valoare elementului %d: ", i);
+        scanf("%d", &arr[i]);
+    }
+}
+
+void input8_2(int *mat, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            printf("Dati valoare elementului de pe pozitia [%d, %d]: ", i, j);
+            scanf("%d", &mat[i * size + j]);
+        }
+    }
+}
+
+// Completarea array-ului cu valori random
+void random_fill(int *arr, int size) {
+    srand(time(NULL));
+    for(int i = 0; i < size; i ++) {
+        arr[i] = rand() % 100;
+    }
+}
+
+void random_fill_mat(int *mat, int size) {
+    srand(time(NULL));
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            mat[i * size + j] = rand() % 100;
+        }
+    }
+}
+
+#pragma endregion
 
 #pragma region Sortari
 // HEAPSORT -> Crescator
@@ -118,8 +226,6 @@ void heap_sort(int *arr, int size) {
         swap(arr, arr + i);
         heapify(arr, i, 0);
     }
-
-    print_arr(arr, size);
 }
 
 // COUNTING SORT -> Descrescator
@@ -141,8 +247,6 @@ void counting_sort(int arr[], int size) {
             bucket[i]--;
         }
     }
-
-    print_arr(arr, size);
 }
 
 // RADIX SORT -> Descrescator
@@ -163,8 +267,6 @@ void radix_sort(int arr[], int size) {
 
         exp *= 10;
     }
-
-    print_arr(arr, size);
 }
 
 // COMBSORT -> Crescator
@@ -187,8 +289,6 @@ void comb_sort(int *arr, int size) {
             }
         }
     }
-
-    print_arr(arr, size);
 }
 
 // MERGE SORT -> Crescator
@@ -248,8 +348,6 @@ void bubble_sort(int *arr, int size) {
                 swap(arr + j, arr + j + 1);
         }
     }
-
-    print_arr(arr, size);
 }
 
 // QUICK SORT -> Crescator
@@ -282,8 +380,6 @@ void quicksort_recursion(int arr[], int low, int high) {
 void quicksort(int arr[], int size) {
     srand(time(NULL));
     quicksort_recursion(arr, 0, size - 1);
-
-    print_arr(arr, size);
 }
 
 // SHELL SORT -> Descrescator
@@ -299,8 +395,6 @@ int shell(int arr[], int size) {
         }
     }
 
-    print_arr(arr, size);
-
     return 0;
 }
 
@@ -315,8 +409,6 @@ int selection_sort(int *arr, int size) {
         if(min != i)
             swap(arr + i, arr + min);
     }
-
-    print_arr(arr, size);
 }
 
 // INSERTION SORT -> Descrescator
@@ -332,24 +424,17 @@ void insertion_sort(int arr[], int size) {
         }
         arr[j + 1] = key;
     }
-
-    print_arr(arr, size);
 }
 
 #pragma endregion
 
-int isPrime(int number) {
-    if(number <= 1) return 0;
-
-    for(int i =  2; i * i <= number; i++) {
-        if(number % i == 0) return 0;
-    }
-
-    return 1;
-}
+#pragma region Variante
 
 void v8_1A(int *arr, int size) {
     int negPar = 0;
+
+    int *clone = (int*)malloc(size * sizeof(int));
+    clone_arr(arr, clone, size);
 
     for(int i = 0; i < size; i++) {
         if(arr[i] < 0 && i % 2 == 0) {
@@ -360,10 +445,16 @@ void v8_1A(int *arr, int size) {
 
     if(negPar) heap_sort(arr, size);
     else counting_sort(arr, size);
+
+    print_arr(arr, clone, size);
+    free(clone);
 }
 
 void v8_1B(int *arr, int size) {
     int sumPar = 0, sumImp = 0, impNum = 0, medImp;
+
+    int *clone = (int*)malloc(size * sizeof(int));
+    clone_arr(arr, clone, size);
 
     for(int i = 0; i < size; i++) {
         if(arr[i] % 2 == 0) sumPar += arr[i];
@@ -379,26 +470,34 @@ void v8_1B(int *arr, int size) {
         radix_sort(arr, size);
     else
         comb_sort(arr, size);
+
+    print_arr(arr, clone, size);
 }
 
 void v8_1C(int *arr, int size) {
     int primes = 0;
 
+    int *clone = (int*)malloc(size * sizeof(int));
+    clone_arr(arr, clone, size);
+
     for(int i = 0; i < size; i++)
         if(isPrime(arr[i])) primes++;
     
     if(primes > 1) {
-        printf("%d prime numbers -> MergeSort\n", primes);
         mergeSort(arr, 0, size - 1);
-        print_arr(arr, size);
     } else {
-        printf("%d prime numbers -> BubbleSort\n", primes);
         bubble_sort(arr, size);
     }
+
+    print_arr(arr, clone, size);
+    free(clone);
 }
 
 void v8_2A(int *mat, int size, int *arr) {
     int prod = 1;
+
+    int *clone = (int*)malloc(size * size * sizeof(int));
+    clone_mat(mat, clone, size);
 
     for(int i = 0; i < size; i++) 
         prod *= mat[i * size];
@@ -408,32 +507,30 @@ void v8_2A(int *mat, int size, int *arr) {
         for(int i = 0; i < size; i++)
             arr[i] = mat[i * size + i];
         
-        print_arr(arr, size);
-        
         quicksort(arr, size);
         
         for(int i = 0; i < size; i++)
             mat[i * size + i] = arr[i];
-        
-        print_mat(mat, size);
     } else {
         // Diagonala secundara
         for(int i = 0; i < size; i++) 
             arr[i] = mat[i * size + (size - 1 - i)];
         
-        print_arr(arr, size);
-        
         shell(arr, size);
         
         for(int i = 0; i < size; i++) 
         mat[i * size + (size - 1 - i)] = arr[i];
-        
-        print_mat(mat, size);
     }
+
+    print_mat(mat, clone, size);
+    free(clone);
 }
 
 void v8_2B(int *mat, int size, int *arr) {
     int isNegOnOdd = 0, isLowest = 0, line, lowestLine, min = 999;
+
+    int *clone = (int*)malloc(size * size * sizeof(int));
+    clone_mat(mat, clone, size);
 
     for(int i = 0; i < size; i++) {
         for(int j = 0; j < size; j++) {
@@ -455,8 +552,6 @@ void v8_2B(int *mat, int size, int *arr) {
         for(int j = 0; j < size; j++) 
             arr[j] = mat[line * size + j];
         
-        print_arr(arr, size);
-        
         selection_sort(arr, size);
 
         for(int j = 0; j < size; j++) 
@@ -465,8 +560,6 @@ void v8_2B(int *mat, int size, int *arr) {
         if(isLowest)
             for(int j = 0; j < size; j++) 
                 arr[j] = mat[lowestLine * size + j];
-        
-        print_arr(arr, size);
 
         insertion_sort(arr, size);
 
@@ -474,78 +567,11 @@ void v8_2B(int *mat, int size, int *arr) {
             mat[lowestLine * size + j] = arr[j];
     }
     
-    print_mat(mat, size);
+    print_mat(mat, clone, size);
+    free(clone);
 }
 
-// Alocarea memoriei pentru array
-int *mem_alloc(int size) {
-    int *arr = (int*)malloc(size * sizeof(int));
-    if(arr == NULL) {
-        printf("Nu s-a putut aloca memorie pentru array!.\n EXITING PROGRAM...");
-        exit(-1);
-    }
-
-    return arr;
-}
-
-// Alocarea memoriei pentru matrice
-int *mem_alloc_mat(int size) {
-    int *mat = (int*)malloc(size * size * sizeof(int));
-    if(mat == NULL) {
-        printf("Nu s-a putut aloca memorie pentru matrice!.\n EXITING PROGRAM...");
-        exit(-1);
-    }
-
-    return mat;
-}
-
-void input8_1(int *arr, int size) {
-    for(int i = 0; i < size; i++) {
-        printf("Dati valoare elementului %d: ", i);
-        scanf("%d", &arr[i]);
-    }
-
-    print_arr(arr, size);
-}
-
-void input8_2(int *mat, int size) {
-    for(int i = 0; i < size; i++) {
-        for(int j = 0; j < size; j++) {
-            printf("Dati valoare elementului de pe pozitia [%d, %d]: ", i, j);
-            scanf("%d", &mat[i * size + j]);
-        }
-    }
-
-    print_mat(mat, size);
-}
-
-// Completarea array-ului cu valori random
-void random_fill(int *arr, int size) {
-    srand(time(NULL));
-    for(int i = 0; i < size; i ++) {
-        arr[i] = rand() % 100;
-    }
-
-    print_arr(arr, size);
-}
-
-void random_fill_mat(int *mat, int size) {
-    srand(time(NULL));
-    for(int i = 0; i < size; i++) {
-        for(int j = 0; j < size; j++) {
-            mat[i * size + j] = rand() % 100;
-        }
-    }
-
-    print_mat(mat, size);
-}
-
-// Eliberarea memoriei
-void free_mem(int *arr, int *mat) {
-    free(arr);
-    free(mat);
-    printf("Memoria a fost eliberata cu succes!\n");
-}
+#pragma endregion
 
 // Meniu
 void menu(int *arr, int *mat, int size) {
@@ -574,6 +600,7 @@ void menu(int *arr, int *mat, int size) {
 
     switch(option) {
         case 1:
+            system("clear");
             while(size < 0 || size % 2 != 1) {
                 printf("Introduceti dimensiunea array-ului: ");
                 scanf("%d", &size);
@@ -583,6 +610,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 2:
+            system("clear");
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -590,6 +618,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 3:
+            system("clear");
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -597,6 +626,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 4:
+            system("clear");
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -604,6 +634,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 5:
+            system("clear");
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -611,6 +642,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 6:
+            system("clear");
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -618,6 +650,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 7:
+            system("clear");
             while(size < 0) {
                 printf("Introduceti dimensiunea matricei: ");
                 scanf("%d", &size);
@@ -628,6 +661,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 8:
+            system("clear");
             if(mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -635,6 +669,7 @@ void menu(int *arr, int *mat, int size) {
             break;
         
         case 9:
+            system("clear");
             if(mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -642,6 +677,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 10:
+            system("clear");
             if(mat == NULL || arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -649,6 +685,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 11:
+            system("clear");
             if(mat == NULL || arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else 
@@ -656,6 +693,7 @@ void menu(int *arr, int *mat, int size) {
             break;
 
         case 99:
+            system("clear");
             if(arr == NULL && mat == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
             else free_mem(arr, mat);
@@ -663,6 +701,7 @@ void menu(int *arr, int *mat, int size) {
         case 0:
             exit(0);
         default:
+            system("clear");
             printf("Invalid subprogram!\n");
             break;
     }
