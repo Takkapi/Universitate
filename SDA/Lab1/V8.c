@@ -720,6 +720,7 @@ void menu(int *arr, int *mat, int size) {
 int main() {
     int *arr = NULL, *mat = NULL;
     int size = -1;
+    
     printf("Laborator 1 - SDA\n");
 
     menu(arr, mat, size);
