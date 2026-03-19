@@ -59,7 +59,7 @@ enum Manufacturers {
 
 enum OS {
     // Tablete
-    iPasOS,
+    iPadOS,
     Android,
     
     // Carti Electronice
@@ -82,6 +82,24 @@ typedef struct {
     int price;
 } Tablete;
 
+static inline char *stringFromType(enum Type t) {
+    static const char *strings[] = { "Tableta", "Carte Electroica", "Tableta Grafica" };
+
+    return strings[t];
+}
+
+static inline char *stringFromManufacturer(enum Manufacturers m) {
+    static const char *strings[] = { "Apple", "Lenovo", "Huawei", "Samsung", "Motorola", "Realme", "Amazon", "Rakuten", "Onyx", "Wacom", "Huion", "XP-Pen" };
+
+    return strings[m];
+}
+
+static inline char *stringFromOS(enum OS os) {
+    static const char *strings[] = { "iPadOS", "Android", "Linux", "InkBox", "Kindle", "Kobo", "None" };
+
+    return strings[os];
+}
+
 Tablete *mem_alloc(int size) {
     Tablete *arrTab = (Tablete*)malloc(size * sizeof(Tablete));
     if(arrTab == NULL) {
@@ -102,7 +120,7 @@ int *mem_alloc_arr(int size) {
     return arr;
 }
 
-void chooseType(Tablete tab, int choice) {
+void chooseType(Tablete *tabArr, int choice) {
     printf("1) Tableta\n");
     printf("2) Carte Electronica\n");
     printf("3) Tableta Grafica\n");
@@ -113,17 +131,17 @@ void chooseType(Tablete tab, int choice) {
 
     switch(choice) {
         case 1:
-            tab.type = Tableta;
+            tabArr[0].type = Tableta;
             break;
         case 2:
-            tab.type = CarteElectronica;
+            tabArr[0].type = CarteElectronica;
             break;
         case 3: 
-            tab.type = TabletaGrafica;
+            tabArr[0].type = TabletaGrafica;
             break;
         default:
             printf("Optiune invalida!\n");
-            chooseType(tab, choice);
+            chooseType(tabArr, choice);
     }
 }
 
@@ -192,13 +210,79 @@ void input(Tablete *tabArr, int size) {
 
     for(int i = 0; i < size; i++) {
         printf("Selectati un tip de mai jos pentru tabelul [%d]\n", i);
-        chooseType(tabArr[i], choice);
+
+        printf("0) Tableta\n");
+        printf("1) Carte Electronica\n");
+        printf("2) Tableta Grafica\n");
+        printf("Selecteaza o optiune: ");
+        scanf("%d", &choice);
+
+        tabArr[0].type = choice;
+        // switch(choice) {
+        //     case 1:
+        //         tabArr[i].type = Tableta;
+        //         break;
+        //     case 2:
+        //         tabArr[i].type = CarteElectronica;
+        //         break;
+        //     case 3: 
+        //         tabArr[i].type = TabletaGrafica;
+        //         break;
+        // }
+
+        printf("\n");
+        if(choice == 0) {
+            printf("0) Apple\n");
+            printf("1) Lenovo\n");
+            printf("2) Huawei\n");
+            printf("3) Samsung\n");
+            printf("4) Motorola\n");
+            printf("5) Realme\n");
+            printf("Selecteaza o optiune: ");
+            scanf("%d", &choice);
+
+            tabArr[i].prod = choice;
+        } else if(choice == 1) {
+            printf("0) Amazon\n");
+            printf("1) Rakuten\n");
+            printf("2) Onyx\n");
+            printf("Selecteaza o optiune: ");
+            scanf("%d", &choice);
+
+            tabArr[i].prod = choice + 6;
+        } else if(choice == 2) {
+            printf("0) Wacom\n");
+            printf("1) Huion\n");
+            printf("2) XP-Pen\n");
+            printf("Selecteaza o optiune: ");
+            scanf("%d", &choice);
+
+            tabArr[i].prod = choice + 9;
+        }
+        // printf("Selecteaza o optiune: ");
+        // scanf("%d", &choice);
+
+        // tabArr[0].prod = choice;
+
+        tabArr[i].displaySize = 12.5f;
+        tabArr[i].os = iPadOS;
+        tabArr[i].cores = 8;
+        tabArr[i].price = 899;
+        // chooseType(tabArr, choice);
     }
 }
 
 void showTabArray(Tablete *tabArr, int size) {
     for(int i = 0; i < size; i++) {
-        printf("");
+        printf(
+            "[%d] %s\t%s\t%.1f\t%s\t%d\t%d\n",
+            i,
+            stringFromType(tabArr[i].type),
+            stringFromManufacturer(tabArr[i].prod),
+            tabArr[i].displaySize,
+            stringFromOS(tabArr[i].os),
+            tabArr[i].cores,
+            tabArr[i].price);
     }
 }
 
@@ -211,7 +295,8 @@ void menu(Tablete *tabArr, int *arr, int size) {
     printf("2) Introducerea valorilor de la tastatura\n");
     printf("3) Afisarea elementelor din array\n");
     printf("4) Sortarea crescatoare dupa preturi (Quick Sort)\n");
-    printf("4) Sortarea descrescatoare dupa dimensiunea ecranului (Quick Sort)\n");
+    printf("5) Sortarea descrescatoare dupa dimensiunea ecranului (Quick Sort)\n");
+    printf("0) Iesire\n");
     printf("\nAlegeti optiunea: ");
     scanf("%d", &option);
 
@@ -228,6 +313,21 @@ void menu(Tablete *tabArr, int *arr, int size) {
             clrscr();
             input(tabArr, size);
 
+            break;
+        case 3:
+            clrscr();
+            showTabArray(tabArr, size);
+
+            break;
+
+        case 0:
+            printf("Iesire program...\n");
+            free(tabArr);
+            free(arr);
+            exit(0);
+            
+        default:
+            printf("Optiune invalida");
             break;
     }
 
