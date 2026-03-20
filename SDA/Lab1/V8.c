@@ -481,6 +481,7 @@ void v8_1B(int *arr, int size) {
         comb_sort(arr, size);
 
     print_arr(arr, clone, size);
+    free(clone);
 }
 
 void v8_1C(int *arr, int size) {
