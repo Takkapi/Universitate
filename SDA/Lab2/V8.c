@@ -31,6 +31,62 @@ void clrscr() {
     //system("cls");
 }
 
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+int partition(int arr[], int low, int high) {
+    int pivot_index = low + (rand() % (high - low));
+    if(pivot_index != high) swap(&arr[pivot_index], &arr[high]);
+
+    int pivot_value = arr[high];
+    int i = low;
+
+    for(int j = low; j < high; j++) {
+        if(arr[j] <= pivot_value) {
+            swap(&arr[i], &arr[j]);
+            i++;
+        }
+    }
+
+    swap(&arr[i], &arr[high]);
+    return i;
+}
+
+void quicksort_recursion(int arr[], int low, int high) {
+    if(low < high) {
+        int pivot_index = partition(arr, low, high);
+        quicksort_recursion(arr, low, pivot_index - 1);
+        quicksort_recursion(arr, pivot_index + 1, high);
+    }
+}
+
+void quicksort(int arr[], int size) {
+    srand(time(NULL));
+    quicksort_recursion(arr, 0, size - 1);
+}
+
+void radix_sort(int arr[], int size) {
+    int i, m = arr[0], exp = 1;
+    int bucket[size], b[size];
+
+    for(i = 0; i < size; i++) {
+        if(arr[i] > m) m = arr[i];
+    }
+
+    while(m / exp > 0) {
+        int bucket_count[10] = {0};
+        for(i = 0; i < size; i++) bucket_count[9 - arr[i] / exp % 10]++;
+        for(i = 1; i < 10; i++) bucket_count[i]  += bucket_count[i - 1];
+        for(i = size - 1; i >= 0; i--) b[--bucket_count[9 - arr[i] / exp % 10]] = arr[i];
+        for(i = 0; i < size; i++) arr[i] = b[i];
+
+        exp *= 10;
+    }
+}
+
 enum Type {
     Tableta,
     CarteElectronica,
@@ -120,65 +176,6 @@ int *mem_alloc_arr(int size) {
     return arr;
 }
 
-void chooseManufacturer(Tablete tab, int choice) {
-    if(choice == 1) {
-        printf("1) Apple\n");
-        printf("2) Lenovo\n");
-        printf("3) Huawei\n");
-        printf("4) Samsung\n");
-        printf("5) Motorola\n");
-        printf("6) Realme\n");
-        printf("Selecteaza o optiune: ");
-        scanf("%d", choice);
-
-        switch(choice) {
-            case 1:
-                tab.prod = Apple;
-                break;
-            case 2:
-                tab.prod = Lenovo;
-                break;
-            case 3: 
-                tab.prod = Huawei;
-                break;
-            case 4:
-                tab.prod = Samsung;
-                break;
-            case 5:
-                tab.prod = Motorola;
-                break;
-            case 6: 
-                tab.prod = Realme;
-                break;
-            default:
-                printf("Optiune invalida!\n");
-                break;
-        }
-    } else if(choice == 2) {
-        printf("1) Amazon\n");
-        printf("2) Rakuten\n");
-        printf("3) Onyx\n");
-        printf("Selecteaza o optiune: ");
-        
-        printf("Selecteaza o optiune: ");
-        scanf("%d", choice);
-
-        switch(choice) {
-            case 1:
-                tab.prod = Amazon;
-                break;
-            case 2:
-                tab.prod = Rakuten;
-                break;
-            case 3: 
-                tab.prod = Onyx;
-                break;
-            default:
-                printf("Optiune invalida!\n");
-        }
-    }
-}
-
 void input(Tablete *tabArr, int size) {
     int choice, temp;
     printf("Inroducerea valorilor:\n");
@@ -194,18 +191,7 @@ void input(Tablete *tabArr, int size) {
         
         temp = choice;
         
-        tabArr[0].type = choice;
-        // switch(choice) {
-        //     case 1:
-        //         tabArr[i].type = Tableta;
-        //         break;
-        //     case 2:
-        //         tabArr[i].type = CarteElectronica;
-        //         break;
-        //     case 3: 
-        //         tabArr[i].type = TabletaGrafica;
-        //         break;
-        // }
+        tabArr[i].type = choice;
 
         printf("\n");
         if(choice == 0) {
@@ -236,10 +222,6 @@ void input(Tablete *tabArr, int size) {
 
             tabArr[i].prod = choice + 9;
         }
-        // printf("Selecteaza o optiune: ");
-        // scanf("%d", &choice);
-
-        // tabArr[0].prod = choice;
 
         printf("\nDimensiune ecran: ");
         scanf("%f", &tabArr[i].displaySize);
@@ -249,6 +231,7 @@ void input(Tablete *tabArr, int size) {
         if(choice == 0) {
             printf("0) iPasOS\n");
             printf("1) Android\n");
+            printf("Selecreaza sistemul de operare: ");
             scanf("%d", &choice);
 
             tabArr[i].os = choice;
@@ -256,15 +239,20 @@ void input(Tablete *tabArr, int size) {
             printf("0) Android\n");
             printf("1) Linux\n");
             printf("2) InkBox\n");
+            printf("Selecreaza sistemul de operare: ");
             scanf("%d", &choice);
 
             tabArr[i].os = choice + 1;
-        }
+        } else if(choice == 2) 
+            tabArr[i].os = None;
+        
+        printf("\nNumar nuclee: ");
+        scanf("%d", &tabArr[i].cores);
 
-        tabArr[i].os = iPadOS;
-        tabArr[i].cores = 8;
-        tabArr[i].price = 899;
-        // chooseType(tabArr, choice);
+        printf("\nPret: ");
+        scanf("%d", &tabArr[i].price);
+
+        clrscr();
     }
 }
 
@@ -282,6 +270,21 @@ void showTabArray(Tablete *tabArr, int size) {
     }
 }
 
+int comparePrice(const void* a, const void* b){
+    return ((Tablete*)a)->price - ((Tablete*)b)->price;
+}
+
+void priceSort(Tablete *tabArr, int size) {
+    // for(int i = 0; i < size; i++) arr[i] = tabArr[i].price;
+
+    qsort(tabArr, sizeof(tabArr) / sizeof(tabArr[0]), size, comparePrice);
+    showTabArray(tabArr, size);
+}
+
+void screenSizeSort(Tablete *tabArr, int size) {
+    // Neimplementat
+}
+
 void menu(Tablete *tabArr, int *arr, int size) {
     int option;
 
@@ -291,7 +294,7 @@ void menu(Tablete *tabArr, int *arr, int size) {
     printf("2) Introducerea valorilor de la tastatura\n");
     printf("3) Afisarea elementelor din array\n");
     printf("4) Sortarea crescatoare dupa preturi (Quick Sort)\n");
-    printf("5) Sortarea descrescatoare dupa dimensiunea ecranului (Quick Sort)\n");
+    printf("5) Sortarea descrescatoare dupa dimensiunea ecranului (Radix Sort)\n");
     printf("0) Iesire\n");
     printf("\nAlegeti optiunea: ");
     scanf("%d", &option);
@@ -313,6 +316,15 @@ void menu(Tablete *tabArr, int *arr, int size) {
         case 3:
             clrscr();
             showTabArray(tabArr, size);
+
+            break;
+        case 4:
+            clrscr();
+            printf("Sotarea crescatoare dupa pret:\n");
+            if(arr == NULL)
+                printf("Error! Array-ul nu a fost alocat.\n");
+            else
+                priceSort(tabArr, size);
 
             break;
 

@@ -630,7 +630,7 @@ void menu(int *arr, int *mat, int size) {
             clrscr();
             if(arr == NULL)
                 printf("Error! Array-ul nu a fost alocat.\n");
-            else 
+            else
                 random_fill(arr, size);
             break;
         
