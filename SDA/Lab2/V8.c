@@ -120,31 +120,6 @@ int *mem_alloc_arr(int size) {
     return arr;
 }
 
-void chooseType(Tablete *tabArr, int choice) {
-    printf("1) Tableta\n");
-    printf("2) Carte Electronica\n");
-    printf("3) Tableta Grafica\n");
-    printf("Selecteaza o optiune: ");
-    
-    printf("Selecteaza o optiune: ");
-    scanf("%d", choice);
-
-    switch(choice) {
-        case 1:
-            tabArr[0].type = Tableta;
-            break;
-        case 2:
-            tabArr[0].type = CarteElectronica;
-            break;
-        case 3: 
-            tabArr[0].type = TabletaGrafica;
-            break;
-        default:
-            printf("Optiune invalida!\n");
-            chooseType(tabArr, choice);
-    }
-}
-
 void chooseManufacturer(Tablete tab, int choice) {
     if(choice == 1) {
         printf("1) Apple\n");
@@ -205,7 +180,7 @@ void chooseManufacturer(Tablete tab, int choice) {
 }
 
 void input(Tablete *tabArr, int size) {
-    int choice;
+    int choice, temp;
     printf("Inroducerea valorilor:\n");
 
     for(int i = 0; i < size; i++) {
@@ -216,7 +191,9 @@ void input(Tablete *tabArr, int size) {
         printf("2) Tableta Grafica\n");
         printf("Selecteaza o optiune: ");
         scanf("%d", &choice);
-
+        
+        temp = choice;
+        
         tabArr[0].type = choice;
         // switch(choice) {
         //     case 1:
@@ -264,7 +241,26 @@ void input(Tablete *tabArr, int size) {
 
         // tabArr[0].prod = choice;
 
-        tabArr[i].displaySize = 12.5f;
+        printf("\nDimensiune ecran: ");
+        scanf("%f", &tabArr[i].displaySize);
+
+        printf("\n");
+        choice = temp;
+        if(choice == 0) {
+            printf("0) iPasOS\n");
+            printf("1) Android\n");
+            scanf("%d", &choice);
+
+            tabArr[i].os = choice;
+        } else if(choice == 1) {
+            printf("0) Android\n");
+            printf("1) Linux\n");
+            printf("2) InkBox\n");
+            scanf("%d", &choice);
+
+            tabArr[i].os = choice + 1;
+        }
+
         tabArr[i].os = iPadOS;
         tabArr[i].cores = 8;
         tabArr[i].price = 899;
