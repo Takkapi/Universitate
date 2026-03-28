@@ -130,7 +130,7 @@ enum OS {
 };
 
 typedef struct {
-    enum Type type;
+    enum Type *type;
     enum Manufacturers prod;
     float displaySize;
     enum OS os;
@@ -191,7 +191,7 @@ void input(Tablete *tabArr, int size) {
         
         temp = choice;
         
-        tabArr[i].type = choice;
+        *(tabArr + i)->type = choice;
 
         printf("\n");
         if(choice == 0) {
@@ -261,7 +261,7 @@ void showTabArray(Tablete *tabArr, int size) {
         printf(
             "[%d] %s\t%s\t%.1f\t%s\t%d\t%d\n",
             i,
-            stringFromType(tabArr[i].type),
+            stringFromType(*(tabArr + i)->type),
             stringFromManufacturer(tabArr[i].prod),
             tabArr[i].displaySize,
             stringFromOS(tabArr[i].os),
@@ -346,7 +346,7 @@ int main() {
     Tablete *tabArr = NULL;
     int size, *arr = NULL;
 
-    printf("Laborator 1 - SDA\n");
+    printf("Laborator 2 - SDA\n");
 
     menu(tabArr, arr, size);
 
