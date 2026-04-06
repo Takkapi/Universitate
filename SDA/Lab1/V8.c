@@ -83,12 +83,12 @@ void print_arr(int *arr, int *clone, int size) {
     
     printf("\nArray-ul original: ");
     for(int i = 0; i < size; i++) {
-        printf("%d ", clone[i]);
+        printf("%d ", *(clone + i));
     }
 
     printf("\nElementele array-ului dupa manipulare: ");
     for(int i = 0; i < size; i++) {
-        printf("%d ", arr[i]);
+        printf("%d ", *(arr + i));
     }
 
     printf("\n\n");
@@ -134,7 +134,7 @@ int isPrime(int number) {
 
 void *clone_arr(int *arr, int *clone, int size) {
     for(int i = 0; i < size; i++) 
-        clone[i] = arr[i];
+        *(clone + i) = *(arr + i);
 }
 
 void *clone_mat(int *mat, int *clone, int size) {
@@ -179,8 +179,14 @@ int *mem_alloc_mat(int size) {
 void input8_1(int *arr, int size) {
     for(int i = 0; i < size; i++) {
         printf("Dati valoare elementului %d: ", i);
-        scanf("%d", &arr[i]);
+        scanf("%d", (arr + i));
     }
+
+    printf("Valorile introduse in array: ");
+    for(int i = 0; i < size; i++)
+        printf("%d ", *(arr + i));
+    
+    printf("\n");
 }
 
 void input8_2(int *mat, int size) {
@@ -195,9 +201,14 @@ void input8_2(int *mat, int size) {
 // Completarea array-ului cu valori random
 void random_fill(int *arr, int size) {
     srand(time(NULL));
-    for(int i = 0; i < size; i ++) {
-        arr[i] = rand() % 100;
-    }
+    for(int i = 0; i < size; i ++) 
+        *(arr + i) = rand() % 100;
+
+    printf("Valorile random introduse in array: ");
+    for(int i = 0; i < size; i++)
+        printf("%d ", *(arr + i));
+    
+    printf("\n");
 }
 
 void random_fill_mat(int *mat, int size) {
